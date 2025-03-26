@@ -1,8 +1,8 @@
 import api from '../api';
 
 // Corrigindo a URL da API
-const API_URL = 'http://localhost:3000/api/obras';
-const API_USUARIOS_URL = 'http://localhost:3000/api/usuarios';
+const API_URL = 'https://tecoleta.tecomat.com.br/api/obras';
+const API_USUARIOS_URL = 'https://tecoleta.tecomat.com.br/api/usuarios';
 
 // Função para buscar obras
 export const fetchObras = async (userId: number) => {

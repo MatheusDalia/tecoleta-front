@@ -4,8 +4,8 @@ import { Platform } from "react-native";
 const api = axios.create({
   baseURL:
     Platform.OS === "web"
-      ? "http://localhost:3001/api"
-      : "http://192.168.0.52:3001/api", // Verifique se este é o IP correto do seu backend
+      ? "https://tecoleta.tecomat.com.br/api"
+      : "https://tecoleta.tecomat.com.br/api", // Verifique se este é o IP correto do seu backend
   timeout: 10000,
 });
 
