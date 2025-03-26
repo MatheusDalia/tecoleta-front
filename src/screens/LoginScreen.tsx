@@ -7,19 +7,21 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { useNavigation, StackNavigationProp } from '@react-navigation/native';
 import styles from './styles';
 import api from '../api';
 import Toast from 'react-native-toast-message';
 import AuthContext from '../contexts/AuthContext';
+import logo from '../../assets/iejc-png.png';
 
-// Definir os tipos para a navegação
+
 type RootStackParamList = {
   Login: undefined;
   ObrasScreen: undefined;
   SignUp: undefined;
-  ForgotPassword: undefined; // Adicionado nova rota
+  ForgotPassword: undefined;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -36,36 +38,32 @@ const LoginScreen = () => {
         email,
         senha,
       });
-      
+
       console.log('Resposta da API:', response.data);
-      
+
       if (response.data.token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-        
-        // Decodificar o token para pegar o ID correto
+
         const tokenParts = response.data.token.split('.');
         const payload = JSON.parse(atob(tokenParts[1]));
-        
+
         const userObject = {
-          id: payload.id, // Usar o ID do token em vez de um valor fixo
+          id: payload.id,
           email: email,
           token: response.data.token,
           role: payload.role
         };
-        
+
         console.log('Login bem-sucedido, dados do usuário:', userObject);
-        
-        // Primeiro setar o usuário
+
         await setUser(userObject);
-        
-        // Mostrar o Toast
+
         Toast.show({
           type: 'success',
           position: 'top',
           text1: 'Login bem-sucedido!',
           text2: 'Você será redirecionado.',
           onShow: () => {
-            // Navegar após o Toast aparecer
             setTimeout(() => {
               console.log('Navegando para ObrasScreen...');
               navigation.reset({
@@ -79,19 +77,18 @@ const LoginScreen = () => {
     } catch (error: any) {
       console.error('Erro ao fazer login:', error);
       const errorMessage = error.response?.data?.message || 'Ocorreu um erro ao tentar fazer login';
-      
+
       Toast.show({
         type: 'error',
         position: 'top',
         text1: 'Ocorreu um erro',
         text2: errorMessage,
       });
-      
+
       Alert.alert('Erro', errorMessage);
     }
   };
 
-  // Navegar para a tela de esqueci senha
   const navigateToForgotPassword = () => {
     navigation.navigate('ForgotPassword');
   };
@@ -100,8 +97,12 @@ const LoginScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header} />
       <ScrollView contentContainerStyle={styles.content}>
+
+        {/* Logo acima do texto "Login" */}
+        <Image source={logo} style={styles.logo} />
+
         <Text style={styles.loginText}>Login</Text>
-        
+
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -110,7 +111,7 @@ const LoginScreen = () => {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Senha"
@@ -118,18 +119,19 @@ const LoginScreen = () => {
           onChangeText={setSenha}
           secureTextEntry
         />
-        
+
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity onPress={navigateToForgotPassword}>
           <Text style={styles.forgotPassword}>Esqueci a senha</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.signUpLink}>Criar conta</Text>
         </TouchableOpacity>
+
       </ScrollView>
       <View style={styles.footer} />
     </SafeAreaView>

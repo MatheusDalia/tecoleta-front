@@ -667,6 +667,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
+  logo: {
+    width: 120, // Ajuste o tamanho conforme necessário
+    height: 120,
+    resizeMode: "contain",
+    alignSelf: "center", // Para centralizar a logo
+    marginBottom: 20,
+  },
+
   summaryBox: {
     backgroundColor: "#f5f5f5",
     borderRadius: 5,
