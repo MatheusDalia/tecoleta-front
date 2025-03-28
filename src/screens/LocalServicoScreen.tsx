@@ -58,7 +58,7 @@ const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
     carregarObra();
   }, [obraId]);
 
-  const isNextEnabled = selectedData && local.trim() !== "";
+  const isNextEnabled = !!selectedData;
 
   const onDateChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || selectedData;
@@ -79,7 +79,7 @@ const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
       servicoData,
       dataLocal: {
         data: selectedData,
-        local: local
+        local: local.trim() || "", // Se local estiver vazio, envia uma string vazia
       }
     });
   };

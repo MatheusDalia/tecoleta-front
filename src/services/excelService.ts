@@ -55,7 +55,7 @@ export const saveFinalServicoData = async (obraId: number, data: FinalServicoDat
       nome: data.servico,
       data: dataFormatada,
       numeroOperarios: Number(data.oficiais),
-      numeroAjudantes: 0, // Adicionando valor default
+      numeroAjudantes: Number(data.ajudantes), // Adicionando valor default
       horasTrabalho: Number(data.horas),
       quantidadeExecutada: Number(data.quantidade),
       local: data.local || 'Local não especificado',

@@ -9,12 +9,14 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation, StackNavigationProp } from '@react-navigation/native';
 import styles from './styles';
 import api from '../api';
 import Toast from 'react-native-toast-message';
 import AuthContext from '../contexts/AuthContext';
 import logo from '../../assets/iejc-png.png';
+import logo2 from '../../assets/logo_tecoleta.png';
 
 
 type RootStackParamList = {
@@ -30,6 +32,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const navigation = useNavigation<NavigationProp>();
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
   const { setUser } = useContext(AuthContext);
 
   const handleLogin = async () => {
@@ -98,8 +101,10 @@ const LoginScreen = () => {
       <View style={styles.header} />
       <ScrollView contentContainerStyle={styles.content}>
 
-        {/* Logo acima do texto "Login" */}
+      <View style={styles.logoContainer}>
         <Image source={logo} style={styles.logo} />
+        <Image source={logo2} style={styles.logo} />
+      </View> 
 
         <Text style={styles.loginText}>Login</Text>
 
@@ -112,13 +117,22 @@ const LoginScreen = () => {
           autoCapitalize="none"
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          value={senha}
-          onChangeText={setSenha}
-          secureTextEntry
-        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Senha"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!senhaVisivel}
+          />
+          <TouchableOpacity onPress={() => setSenhaVisivel(!senhaVisivel)}>
+            <MaterialCommunityIcons
+              name={senhaVisivel ? 'eye-off' : 'eye'}
+              size={24}
+              color="gray"
+            />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Login</Text>

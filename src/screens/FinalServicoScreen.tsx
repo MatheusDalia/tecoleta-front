@@ -67,7 +67,7 @@ const FinalServicoScreen = ({ navigation, route }: FinalServicoScreenProps) => {
       quantidade: Number(quantidade),
       data: dataLocal.data.toISOString(),
       oficiais: Number(oficiais),
-      ajudantes: ajudantes ? Number(ajudantes) : 0,
+      ajudantes: ajudantes.trim() !== "" ? Number(ajudantes) : 0, // Evita string vazia
       horas: Number(horas),
       local: dataLocal.local,
       servico: servicoData.servico,

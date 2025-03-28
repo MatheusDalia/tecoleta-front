@@ -467,7 +467,24 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
-  bold: { fontWeight: "bold", textDecorationLine: "underline" },
+  passwordContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    height: 50,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    fontSize: 16,
+  },
+
+  passwordInput: {
+    flex: 1,
+    height: 40,
+  },
+
+  bold: { fontWeight: "bold", textDecorationLine: "underline", fontSize: 24 },
   button: {
     flex: 1,
     padding: 15,
@@ -673,6 +690,22 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     alignSelf: "center", // Para centralizar a logo
     marginBottom: 20,
+    marginHorizontal: 20,
+  },
+
+  logo2: {
+    width: 120, // Ajuste o tamanho conforme necessário
+    height: 120,
+    resizeMode: "contain",
+    alignSelf: "center", // Para centralizar a logo
+    marginBottom: 20,
+  },
+
+  logoContainer: {
+    flexDirection: "row",
+    justifyContent: "center", // Centraliza horizontalmente
+    alignItems: "center", // Alinha verticalmente
+    marginBottom: 20, // Espaço abaixo das logos
   },
 
   summaryBox: {
