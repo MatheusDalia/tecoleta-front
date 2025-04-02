@@ -7,11 +7,14 @@ import {
   ScrollView,
   Alert,
   Platform,
+  Image
 } from 'react-native';
 import styles from './styles';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { saveFinalServicoData, generateExcel } from '../services/excelService';
 import api from '../api';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 type RootStackParamList = {
   ObrasScreen: undefined;
@@ -226,14 +229,19 @@ const FinalServicoScreen = ({ navigation, route }: FinalServicoScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header} />
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
       <ScrollView 
         ref={scrollViewRef}
         contentContainerStyle={styles.content2}
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.title}>
-          Projeto <Text style={styles.bold}>{obraNome}</Text>
+          <Text style={styles.bold}>{obraNome}</Text>
         </Text>
         
         <Text style={styles.subtitle}>Serviço: {servicoData.servico}</Text>

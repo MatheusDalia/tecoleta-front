@@ -5,6 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import api from '../api';
 
+
 interface ServicoData {
   obraId: number;
   obra: string;
@@ -42,6 +43,20 @@ export const saveServicoData = async (data: ServicoData) => {
   } catch (error) {
     console.error('Erro ao salvar dados:', error);
   }
+};
+
+// Função para adicionar estilos ao arquivo Excel
+const addStylesToExcel = (ws) => {
+  const range = XLSX.utils.decode_range(ws['!ref']); 
+  const headerRow = range.s.r; 
+
+  // Ajustar largura das colunas
+  ws['!cols'] = new Array(range.e.c + 1).fill({ wch: 20 }); // Ajusta a largura das colunas para 20 caracteres
+
+  // Ajustar altura das linhas de título
+  ws['!rows'] = [{ hpt: 30 }]; // Define a altura do cabeçalho
+
+  return ws;
 };
 
 export const saveFinalServicoData = async (obraId: number, data: FinalServicoData) => {
@@ -145,14 +160,27 @@ export const generateExcel = async (obraId: number, nomeAtividade?: string) => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Atividades");
 
+    const styledWs = addStylesToExcel(ws);
+
+    // Substituir a planilha não estilizada pela estilizada
+    wb.Sheets["Atividades"] = styledWs;
+
     if (Platform.OS === 'web') {
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const wbout = XLSX.write(wb, { 
+        bookType: 'xlsx', 
+        type: 'array',
+        cellStyles: true  // Adicione esta linha
+      });
       const blob = new Blob([wbout], { 
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
       });
       return blob;
     } else {
-      const wbout = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
+      const wbout = XLSX.write(wb, { 
+        type: 'base64', 
+        bookType: 'xlsx',
+        cellStyles: true  // Adicione esta linha
+      });
       const fileName = `obra_${obraId}_servicos_${Date.now()}.xlsx`;
       const filePath = `${FileSystem.documentDirectory}${fileName}`;
       await FileSystem.writeAsStringAsync(filePath, wbout, {

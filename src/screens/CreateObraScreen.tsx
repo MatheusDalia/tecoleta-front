@@ -5,14 +5,13 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Alert,
   ActivityIndicator,
   TextInput,
-  FlatList,
+  Image
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import styles from './styles';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
-import { fetchObras, fetchUsuarios, createOrUpdateObra } from '../services/obraService';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../api';
 
@@ -28,15 +27,18 @@ type CreateObraScreenProps = {
   route: RouteProp<RootStackParamList, 'CreateObra'>;
 };
 
+type Colaborador = {
+  id: number;
+  email: string;
+};
+
 const CreateObraScreen = ({ navigation, route }: CreateObraScreenProps) => {
   const { user } = useAuth();
-  const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [obraName, setObraName] = useState('');
   const [selectedObra, setSelectedObra] = useState<number | null>(null);
-  const [usuarios, setUsuarios] = useState([]);
-  const [colaboradoresSelecionados, setColaboradoresSelecionados] = useState<number[]>([]);
-  const [userId, setUserId] = useState(1); // Defina o userId corretamente (pode vir do contexto de autenticação)
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
+  const [emailInput, setEmailInput] = useState('');
 
   const { obraId } = route.params || {};
 
@@ -47,16 +49,6 @@ const CreateObraScreen = ({ navigation, route }: CreateObraScreenProps) => {
   const carregarDados = async () => {
     try {
       setLoading(true);
-      
-      // Carregar usuários primeiro
-      try {
-        const usuariosResponse = await api.get('/usuarios');
-        console.log('Usuários carregados:', usuariosResponse.data);
-        setUsuarios(usuariosResponse.data);
-      } catch (usuariosError) {
-        console.error('Erro ao carregar usuários:', usuariosError);
-        setUsuarios([]);
-      }
 
       // Se estiver editando uma obra existente
       if (obraId) {
@@ -72,19 +64,26 @@ const CreateObraScreen = ({ navigation, route }: CreateObraScreenProps) => {
           // Verificar se há colaboradores e setá-los
           if (obra.colaboradores) {
             console.log('Colaboradores encontrados:', obra.colaboradores);
-            // Garantir que estamos pegando os IDs corretamente
-            const colaboradoresIds = obra.colaboradores.map((colab: any) => colab.id);
-            console.log('IDs dos colaboradores:', colaboradoresIds);
-            setColaboradoresSelecionados(colaboradoresIds);
+            setColaboradores(obra.colaboradores);
           }
         } catch (error) {
           console.error('Erro ao carregar detalhes da obra:', error);
-          Alert.alert('Erro', 'Não foi possível carregar os detalhes da obra');
+          Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: 'Não foi possível carregar os detalhes da obra',
+            position: 'bottom'
+          });
         }
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
-      Alert.alert('Erro', 'Erro ao carregar dados. Tente novamente mais tarde.');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Erro ao carregar dados. Tente novamente mais tarde.',
+        position: 'bottom'
+      });
     } finally {
       setLoading(false);
     }
@@ -92,71 +91,148 @@ const CreateObraScreen = ({ navigation, route }: CreateObraScreenProps) => {
 
   const handleCreateOrUpdateObra = async () => {
     if (!user) {
-      Alert.alert('Erro', 'Usuário não autenticado');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Usuário não autenticado',
+        position: 'bottom'
+      });
       return;
     }
 
     if (!obraName.trim()) {
-      Alert.alert('Erro', 'O nome da obra não pode estar vazio.');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'O nome da obra não pode estar vazio.',
+        position: 'bottom'
+      });
       return;
     }
 
     try {
+      // Extrair apenas os IDs dos colaboradores para enviar ao servidor
+      const colaboradoresIds = colaboradores.map(colab => colab.id);
+      
       console.log('Enviando dados:', {
         id: selectedObra,
         nome: obraName,
-        colaboradores: colaboradoresSelecionados,
+        colaboradores: colaboradoresIds,
         userId: user.id
       });
       
       const response = await api.post('/obras', {
         id: selectedObra,
         nome: obraName,
-        colaboradores: colaboradoresSelecionados,
+        colaboradores: colaboradoresIds,
         userId: user.id
       });
 
       console.log('Resposta do servidor:', response.data);
       
+      Toast.show({
+        type: 'success',
+        text1: 'Sucesso',
+        text2: obraId ? 'Obra atualizada com sucesso!' : 'Obra criada com sucesso!',
+        position: 'bottom'
+      });
+      
       setObraName('');
       setSelectedObra(null);
-      setColaboradoresSelecionados([]);
+      setColaboradores([]);
       navigation.navigate('ObrasScreen');
     } catch (error: any) {
       console.error('Erro ao criar/editar obra:', error);
       console.log('Erro detalhado:', error.response?.data);
-      Alert.alert('Erro', error.response?.data?.message || 'Erro ao criar/editar obra');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: error.response?.data?.message || 'Erro ao criar/editar obra',
+        position: 'bottom'
+      });
     }
   };
 
-  const renderUsuarioItem = ({ item }: any) => {
-    if (item.id === user?.id) return null;
+  const handleAddColaborador = async () => {
+    if (!emailInput.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Por favor, digite um email válido',
+        position: 'bottom'
+      });
+      return;
+    }
 
-    const isSelected = colaboradoresSelecionados.includes(item.id);
-    console.log(`Usuário ${item.email} (ID: ${item.id}) - Selecionado: ${isSelected}`);
+    // Verificar se o email já foi adicionado
+    if (colaboradores.some(colab => colab.email === emailInput)) {
+      Toast.show({
+        type: 'info',
+        text1: 'Aviso',
+        text2: 'Este colaborador já foi adicionado',
+        position: 'bottom'
+      });
+      return;
+    }
 
-    return (
-      <TouchableOpacity
-        style={[
-          styles.userItem,
-          isSelected && styles.selectedUserItem
-        ]}
-        onPress={() => {
-          setColaboradoresSelecionados((prev) =>
-            prev.includes(item.id)
-              ? prev.filter((id) => id !== item.id)
-              : [...prev, item.id]
-          );
-        }}
-      >
-        <Text style={[
-          styles.userText,
-          isSelected && styles.selectedUserText
-        ]}>
-          {item.email}
-        </Text>
-      </TouchableOpacity>
-    );
+    try {
+      // Verificar se o usuário existe no sistema
+      const response = await api.get(`/usuarios/por-email?email=${emailInput}`);
+      
+      if (response.data && response.data.id) {
+        // O usuário existe
+        if (response.data.id === user?.id) {
+          Toast.show({
+            type: 'info',
+            text1: 'Aviso',
+            text2: 'Você não pode adicionar a si mesmo como colaborador',
+            position: 'bottom'
+          });
+          return;
+        }
+
+        // Adicionar à lista de colaboradores
+        setColaboradores(prev => [
+          ...prev, 
+          { id: response.data.id, email: response.data.email }
+        ]);
+        
+        Toast.show({
+          type: 'success',
+          text1: 'Sucesso',
+          text2: 'Colaborador adicionado com sucesso!',
+          position: 'bottom'
+        });
+        
+        // Limpar o campo de input
+        setEmailInput('');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: 'Usuário não encontrado',
+          position: 'bottom'
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Usuário não encontrado no sistema',
+        position: 'bottom'
+      });
+    }
+  };
+
+  const removeColaborador = (id: number) => {
+    setColaboradores(prev => prev.filter(colab => colab.id !== id));
+    Toast.show({
+      type: 'success',
+      text1: 'Sucesso',
+      text2: 'Colaborador removido com sucesso!',
+      position: 'bottom'
+    });
   };
 
   return (
@@ -170,20 +246,45 @@ const CreateObraScreen = ({ navigation, route }: CreateObraScreenProps) => {
           onChangeText={setObraName}
         />
 
-        <Text style={styles.title}>Selecionar Colaboradores</Text>
+        <Text style={styles.title}>Adicionar Colaboradores</Text>
+        <View style={styles.emailInputContainer}>
+          <TextInput
+            style={styles.emailInput}
+            placeholder="Digite o email do colaborador"
+            value={emailInput}
+            onChangeText={setEmailInput}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TouchableOpacity 
+            style={styles.addButton} 
+            onPress={handleAddColaborador}
+          >
+            <Text style={styles.addButtonText}>Adicionar</Text>
+          </TouchableOpacity>
+        </View>
+
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           <>
-            {usuarios.length > 1 ? (
-              <FlatList
-                data={usuarios}
-                keyExtractor={(item: any) => item.id.toString()}
-                renderItem={renderUsuarioItem}
-                style={styles.userList}
-              />
+            {colaboradores.length > 0 ? (
+              <View style={styles.colaboradoresList}>
+                <Text style={styles.subtitle}>Colaboradores:</Text>
+                {colaboradores.map(colab => (
+                  <View key={colab.id} style={styles.colaboradorItem}>
+                    <Text style={styles.colaboradorText}>{colab.email}</Text>
+                    <TouchableOpacity 
+                      onPress={() => removeColaborador(colab.id)}
+                      style={styles.removeButton}
+                    >
+                      <Text style={styles.removeButtonText}>Remover</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
             ) : (
-              <Text style={styles.noUsersText}>Não há outros usuários disponíveis</Text>
+              <Text style={styles.noColabsText}>Nenhum colaborador adicionado</Text>
             )}
           </>
         )}

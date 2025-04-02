@@ -8,11 +8,14 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image
 } from 'react-native';
 import { useNavigation, StackNavigationProp } from '@react-navigation/native';
 import styles from './styles';
 import api from '../api';
 import Toast from 'react-native-toast-message';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 type RootStackParamList = {
   Login: undefined;
@@ -72,7 +75,12 @@ const ForgotPasswordScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header} />
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.loginText}>Esqueci a Senha</Text>
         

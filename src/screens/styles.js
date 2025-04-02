@@ -22,13 +22,14 @@ const styles = StyleSheet.create({
   },
 
   cardsContainer: {
+    backgroundColor: "#f5f5f5",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
   card: {
     width: "48%",
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
     borderRadius: 8,
     marginBottom: 15,
     padding: 15,
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "48%",
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
     borderRadius: 8,
     marginBottom: 15,
     padding: 15,
@@ -127,6 +128,13 @@ const styles = StyleSheet.create({
   header: {
     height: 60,
     backgroundColor: "#041E42",
+  },
+
+  logoBranca: {
+    width: 80, // Ajuste o tamanho conforme necessário
+    height: 50,
+    resizeMode: "contain",
+    marginHorizontal: 10,
   },
   footer: {
     height: 60,
@@ -321,12 +329,13 @@ const styles = StyleSheet.create({
   },
 
   cardContainer: {
+    backgroundColor: "#f5f5f5",
     width: "90%",
     marginBottom: 15,
     position: "relative",
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
     borderRadius: 10,
     padding: 20,
     minHeight: 100,
@@ -467,6 +476,70 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
+  emailInputContainer: {
+    flexDirection: "row",
+    marginBottom: 15,
+  },
+  emailInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  addButton: {
+    backgroundColor: "#4CAF50",
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  colaboradoresList: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  colaboradorItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 5,
+    marginBottom: 8,
+    backgroundColor: "#f9f9f9",
+  },
+  colaboradorText: {
+    flex: 1,
+    fontSize: 16,
+  },
+  removeButton: {
+    backgroundColor: "#f44336",
+    padding: 8,
+    borderRadius: 5,
+  },
+  removeButtonText: {
+    color: "white",
+    fontWeight: "500",
+  },
+  noColabsText: {
+    marginVertical: 20,
+    textAlign: "center",
+    color: "#666",
+    fontStyle: "italic",
+  },
+
   passwordContainer: {
     width: "100%",
     flexDirection: "row",
@@ -498,28 +571,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  cardContainer: {
-    width: "90%",
-    marginBottom: 15,
-    position: "relative",
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    height: 120, // Altura fixa para o card
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
+
   cardTitle: {
     fontSize: 24, // Título maior
     fontWeight: "bold",
@@ -685,8 +737,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 120, // Ajuste o tamanho conforme necessário
-    height: 120,
+    width: 200, // Ajuste o tamanho conforme necessário
+    height: 200,
     resizeMode: "contain",
     alignSelf: "center", // Para centralizar a logo
     marginBottom: 20,

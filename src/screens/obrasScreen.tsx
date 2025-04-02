@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   Modal,
   Linking,
-  Platform
+  Platform,
+  Image
 } from 'react-native';
 import styles from './styles';
 import { NavigationProp } from '@react-navigation/native';
@@ -17,6 +18,8 @@ import api from '../api';
 import { useAuth } from '../contexts/AuthContext';
 import { Menu, Provider as PaperProvider } from 'react-native-paper';
 import { generateExcel } from '../services/excelService';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 type RootStackParamList = {
   ObrasScreen: undefined;
@@ -218,7 +221,12 @@ const ObrasScreen = ({ navigation }: ObrasScreenProps) => {
   return (
     <PaperProvider>
       <SafeAreaView style={styles.container}>
-        <View style={styles.header} />
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (

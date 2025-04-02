@@ -7,12 +7,15 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Image
 } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
 import styles from './styles';
 import { useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import api from '../api';
 import { saveServicoData } from '../services/excelService';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 type RootStackParamList = {
   ObrasScreen: undefined;
@@ -98,7 +101,12 @@ const EscolhaServicoScreen = ({ navigation, route }: EscolhaServicoScreenProps) 
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header} />
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.content2}>
         <Text style={styles.title}>
           <Text style={styles.bold}>{obraNome}</Text>

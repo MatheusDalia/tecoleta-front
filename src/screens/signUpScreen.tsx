@@ -7,11 +7,14 @@ import {
   SafeAreaView,
   ScrollView,
   ActivityIndicator,
+  Image
 } from 'react-native';
 import styles from './styles';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import api from '../api';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
@@ -97,8 +100,6 @@ const SignUpScreen = () => {
       });
 
       if (response.data.success) {
-        // Envia email de verificação
-        await api.post('/enviar-verificacao', { email });
         
         Toast.show({
           type: 'success',
@@ -125,7 +126,12 @@ const SignUpScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header} />
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.loginText}>Cadastro</Text>
 

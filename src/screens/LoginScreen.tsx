@@ -17,6 +17,8 @@ import Toast from 'react-native-toast-message';
 import AuthContext from '../contexts/AuthContext';
 import logo from '../../assets/iejc-png.png';
 import logo2 from '../../assets/logo_tecoleta.png';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 
 type RootStackParamList = {
@@ -98,12 +100,17 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header} />
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.content}>
 
       <View style={styles.logoContainer}>
-        <Image source={logo} style={styles.logo} />
         <Image source={logo2} style={styles.logo} />
+        <Image source={logo} style={styles.logo} />
       </View> 
 
         <Text style={styles.loginText}>Login</Text>
