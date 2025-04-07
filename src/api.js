@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Platform } from "react-native";
-
+//http://localhost:3000/api
 const api = axios.create({
   baseURL:
     Platform.OS === "web"

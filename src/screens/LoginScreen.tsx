@@ -101,10 +101,6 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Image source={logoBranca2} style={styles.logoBranca} />
-          <Image source={logoBranca} style={styles.logoBranca} />
-        </View>
       </View>
       <ScrollView contentContainerStyle={styles.content}>
 

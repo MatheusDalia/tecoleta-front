@@ -103,8 +103,6 @@ const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
         <Text style={styles.subtitle}>Serviço: {servicoData.servico}</Text>
         <Text style={styles.subtitle}>Unidade: {servicoData.unidade}</Text>
 
-        <Text style={styles.stepIndicator}>Etapa 1 de 2: Data e Local</Text>
-
         <Text style={styles.label}>Data:</Text>
         {Platform.OS === 'web' ? (
           <input
