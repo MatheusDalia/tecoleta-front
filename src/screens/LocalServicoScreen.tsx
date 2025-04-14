@@ -42,10 +42,17 @@ type LocalServicoScreenProps = {
 
 const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
   const { obraId, servicoData } = route.params;
-  const [selectedData, setSelectedData] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [local, setLocal] = useState("");
   const [obraNome, setObraNome] = useState("");
+
+  const onChange = (event: any, date?: Date) => {
+    setShowPicker(false);
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
 
   useEffect(() => {
     const carregarObra = async () => {
@@ -61,17 +68,9 @@ const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
     carregarObra();
   }, [obraId]);
 
-  const isNextEnabled = !!selectedData;
+  const isNextEnabled = !!selectedDate;
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || selectedData;
-    setShowDatePicker(Platform.OS === 'ios');
-    setSelectedData(currentDate);
-  };
 
-  const showDatepicker = () => {
-    setShowDatePicker(true);
-  };
 
   const handleNext = () => {
     if (!isNextEnabled) return;
@@ -81,7 +80,7 @@ const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
       obraId, 
       servicoData,
       dataLocal: {
-        data: selectedData,
+        data: selectedDate,
         local: local.trim() || "", // Se local estiver vazio, envia uma string vazia
       }
     });
@@ -104,41 +103,29 @@ const LocalServicoScreen = ({ navigation, route }: LocalServicoScreenProps) => {
         <Text style={styles.subtitle}>Unidade: {servicoData.unidade}</Text>
 
         <Text style={styles.label}>Data:</Text>
-        {Platform.OS === 'web' ? (
-          <input
-            type="date"
-            value={selectedData.toISOString().split('T')[0]}
-            onChange={(e) => setSelectedData(new Date(e.target.value))}
-            style={{
-              padding: 15,
-              fontSize: 16,
-              borderRadius: 5,
-              borderWidth: 1,
-              borderColor: '#ddd',
-              marginBottom: 15,
-              width: '100%',
-            }}
+
+        <View style={{ padding: 20 }}>
+        <TouchableOpacity
+          onPress={() => setShowPicker(true)}
+          style={{
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 8,
+            padding: 12,
+          }}
+        >
+          <Text>{selectedDate.toLocaleDateString('pt-BR')}</Text>
+        </TouchableOpacity>
+
+        {showPicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onChange}
           />
-        ) : (
-          <>
-            <TouchableOpacity 
-              style={styles.input}
-              onPress={showDatepicker}
-            >
-              <Text>{selectedData.toLocaleDateString('pt-BR')}</Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={selectedData}
-                mode="date"
-                is24Hour={true}
-                display="default"
-                onChange={onDateChange}
-              />
-            )}
-          </>
         )}
+      </View>
 
         <Text style={styles.label}>Local(Opcional):</Text>
         <TextInput

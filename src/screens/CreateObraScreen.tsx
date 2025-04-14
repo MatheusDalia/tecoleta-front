@@ -14,6 +14,8 @@ import styles from './styles';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../api';
+import logoBranca from '../../assets/iejc-horizontal-branco.png';
+import logoBranca2 from '../../assets/tecoletaBranco.png';
 
 type RootStackParamList = {
   ObrasScreen: undefined;
@@ -237,6 +239,12 @@ const CreateObraScreen = ({ navigation, route }: CreateObraScreenProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image source={logoBranca2} style={styles.logoBranca} />
+          <Image source={logoBranca} style={styles.logoBranca} />
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{obraId ? 'Editar Obra' : 'Criar Obra'}</Text>
         <TextInput

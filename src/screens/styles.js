@@ -105,6 +105,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 15,
     fontSize: 16,
+    borderWidth: 1, // Adiciona a borda
+    borderColor: "#ccc", // Cor da borda (pode ser #000 ou outra)
   },
   loginButton: {
     width: "100%",
@@ -737,8 +739,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 200, // Ajuste o tamanho conforme necessário
-    height: 200,
+    width: 150, // Ajuste o tamanho conforme necessário
+    height: 150,
     resizeMode: "contain",
     alignSelf: "center", // Para centralizar a logo
     marginBottom: 20,
