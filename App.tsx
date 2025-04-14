@@ -12,6 +12,7 @@ import { AuthProvider } from './src/contexts/AuthContext';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import LocalServicoScreen from './src/screens/LocalServicoScreen';
+import NewPasswordScreen from './src/screens/NewPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,7 @@ const App = () => {
         <Stack.Screen name="CreateObra" component={CreateObraScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+        <Stack.Screen name ="NewPassword" component={NewPasswordScreen} />
         
         </Stack.Navigator>
         <Toast />

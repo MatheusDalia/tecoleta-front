@@ -98,6 +98,10 @@ const LoginScreen = () => {
     navigation.navigate('ForgotPassword');
   };
 
+  const navigateToNewPassword = () => {
+    navigation.navigate('NewPassword');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -147,6 +151,10 @@ const LoginScreen = () => {
 
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.signUpLink}>Criar conta</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={navigateToNewPassword}>
+          <Text style={styles.forgotPassword}>Inserir senha nova</Text>
         </TouchableOpacity>
 
       </ScrollView>

@@ -1,5 +1,7 @@
 {
   "expo": {
+    "scheme": "myapp",
+    "deepLinking": true,
     "name": "tecomat-app",
     "slug": "tecomat-app",
     "platforms": ["ios", "android", "web"],
