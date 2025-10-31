@@ -1,13 +1,16 @@
 {
   "expo": {
     "scheme": "myapp",
-    "deepLinking": true,
-    "name": "tecomat-app",
+    "name": "Tecoleta",
     "slug": "tecomat-app",
-    "platforms": ["ios", "android", "web"],
-    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo_tecoleta.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -22,10 +25,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.matheusdalia.tecomatapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6ea5a7e5-3c63-4927-828a-6090660f0e30"
+      }
+    },
+    "owner": "matheusdalia"
   }
 }

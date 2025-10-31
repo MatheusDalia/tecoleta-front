@@ -1,10 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-import * as XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import api from '../api';
-
 
 interface ServicoData {
   obraId: number;
@@ -16,7 +14,6 @@ interface ServicoData {
 }
 
 interface FinalServicoData {
-  // Adicione aqui os campos do FinalServicoScreen
   quantidade: number;
   data: string;
   observacoes: string;
@@ -45,32 +42,16 @@ export const saveServicoData = async (data: ServicoData) => {
   }
 };
 
-// Função para adicionar estilos ao arquivo Excel
-const addStylesToExcel = (ws) => {
-  const range = XLSX.utils.decode_range(ws['!ref']); 
-  const headerRow = range.s.r; 
-
-  // Ajustar largura das colunas
-  ws['!cols'] = new Array(range.e.c + 1).fill({ wch: 20 }); // Ajusta a largura das colunas para 20 caracteres
-
-  // Ajustar altura das linhas de título
-  ws['!rows'] = [{ hpt: 30 }]; // Define a altura do cabeçalho
-
-  return ws;
-};
-
 export const saveFinalServicoData = async (obraId: number, data: FinalServicoData) => {
   try {
-    // Converter a data para o formato ISO
-    const dataFormatada = new Date().toISOString(); // Por enquanto usando data atual
-    console.log("Data formatada:", data);
-    // Preparar dados para o formato da tabela Atividade
+    const dataFormatada = new Date().toISOString();
+
     const atividadeData: AtividadeData = {
       obra: data.obra,
       nome: data.servico,
       data: dataFormatada,
       numeroOperarios: Number(data.oficiais),
-      numeroAjudantes: Number(data.ajudantes), // Adicionando valor default
+      numeroAjudantes: Number(data.ajudantes),
       horasTrabalho: Number(data.horas),
       quantidadeExecutada: Number(data.quantidade),
       local: data.local || 'Local não especificado',
@@ -78,19 +59,12 @@ export const saveFinalServicoData = async (obraId: number, data: FinalServicoDat
       obraId: obraId
     };
 
-    console.log('Dados completos recebidos:', data);
-    console.log('Dados formatados para API:', atividadeData);
-    console.log('Tipo da data:', typeof atividadeData.data);
-    console.log('Tipo do local:', typeof atividadeData.local);
-
-    // Validar dados antes de enviar
     if (!atividadeData.obra || !atividadeData.nome || !atividadeData.data || !atividadeData.numeroOperarios || 
         !atividadeData.horasTrabalho || !atividadeData.quantidadeExecutada || !atividadeData.obraId ||
         !atividadeData.local) {
       throw new Error('Dados incompletos: ' + JSON.stringify(atividadeData));
     }
 
-    // Garantir que todos os campos obrigatórios estão presentes e não são undefined
     const dadosParaAPI = {
       ...atividadeData,
       data: atividadeData.data || new Date().toISOString(),
@@ -98,11 +72,9 @@ export const saveFinalServicoData = async (obraId: number, data: FinalServicoDat
       observacoes: atividadeData.observacoes || ''
     };
 
-    // Salvar no banco de dados via API
     const response = await api.post('/atividades', dadosParaAPI);
     console.log('Resposta da API:', response.data);
 
-    // Salvar também no AsyncStorage para o Excel
     const key = `final_servico_${obraId}_${Date.now()}`;
     await AsyncStorage.setItem(key, JSON.stringify(data));
 
@@ -119,80 +91,57 @@ export const saveFinalServicoData = async (obraId: number, data: FinalServicoDat
 
 export const generateExcel = async (obraId: number, nomeAtividade?: string) => {
   try {
-    console.log('Iniciando geração do Excel para obra:', obraId);
-    
-    // Buscar dados do banco de dados via API
+    console.log('Iniciando geração do CSV para obra:', obraId);
+
     const response = await api.get(`/atividades`, {
       params: { obraId }
     });
 
     const response2 = await api.get(`/obras/${obraId}`);
     const obraNome = response2.data.nome;
-    
+
     let atividades = response.data;
-    console.log('Número de atividades encontradas:', atividades);
-    
 
     if (nomeAtividade) {
       atividades = atividades.filter(atividade => atividade.nome === nomeAtividade);
-      console.log(`Atividades filtradas pelo nome "${nomeAtividade}":`, atividades.length);
-    }  
+    }
 
     if (!atividades || atividades.length === 0) {
       throw new Error('Nenhuma atividade encontrada para esta obra');
     }
 
-    // Formatar dados para o Excel
     const dadosFormatados = atividades.map(atividade => ({
       'Obra': obraNome,
       'Nome da Atividade': atividade.nome,
       'Data': new Date(atividade.data).toLocaleDateString(),
       'Número de Operários': atividade.numeroOperarios,
-      'Número de Ajudantes': atividade.numeroAjudantes,
+      'Número de Ajudantes': atividade.numeroAjudantes ?? '',
       'Horas de Trabalho': atividade.horasTrabalho,
       'Quantidade Executada': atividade.quantidadeExecutada,
       'Local': atividade.local,
-      'Observações': atividade.observacoes
+      'Observações': atividade.observacoes ?? ''
     }));
 
-    // Criar workbook
-    const ws = XLSX.utils.json_to_sheet(dadosFormatados);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Atividades");
+    const chaves = Object.keys(dadosFormatados[0]);
+    const cabecalho = chaves.join(',');
+    const linhas = dadosFormatados.map(obj =>
+      chaves.map(k => `"${(obj[k] ?? '').toString().replace(/"/g, '""')}"`).join(',')
+    );
+    const csv = [cabecalho, ...linhas].join('\n');
 
-    const styledWs = addStylesToExcel(ws);
+    const fileName = `obra_${obraId}_atividades_${Date.now()}.csv`;
+    const filePath = FileSystem.documentDirectory + fileName;
 
-    // Substituir a planilha não estilizada pela estilizada
-    wb.Sheets["Atividades"] = styledWs;
+    await FileSystem.writeAsStringAsync(filePath, csv, {
+      encoding: FileSystem.EncodingType.UTF8
+    });
 
-    if (Platform.OS === 'web') {
-      const wbout = XLSX.write(wb, { 
-        bookType: 'xlsx', 
-        type: 'array',
-        cellStyles: true  // Adicione esta linha
-      });
-      const blob = new Blob([wbout], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-      });
-      return blob;
-    } else {
-      const wbout = XLSX.write(wb, { 
-        type: 'base64', 
-        bookType: 'xlsx',
-        cellStyles: true  // Adicione esta linha
-      });
-      const fileName = `obra_${obraId}_servicos_${Date.now()}.xlsx`;
-      const filePath = `${FileSystem.documentDirectory}${fileName}`;
-      await FileSystem.writeAsStringAsync(filePath, wbout, {
-        encoding: FileSystem.EncodingType.Base64
-      });
-      await Sharing.shareAsync(filePath);
-    }
+    await Sharing.shareAsync(filePath);
   } catch (error) {
-    console.error('Erro ao gerar Excel:', error);
+    console.error('Erro ao gerar CSV:', error);
     if (error.response) {
       console.error('Detalhes do erro:', error.response.data);
     }
     throw error;
   }
-}; 
+};

@@ -45,6 +45,15 @@ const serviceUnits: Record<string, string> = {
   "Parede de concreto - Concreto": "m³",
   "Parede de concreto - Forma": "m²",
   "Pintura": "m²",
+    "Estaqueamento": "m",
+    "Forma": "m²",
+    "Armação": "kg",
+    "Concreto": "m³",
+    "Marcação de alvenaria": "m",
+    "Rejunte": "m²",
+    "Chapisco": "m²",
+    "Impermeabilização": "m²",
+    "Portas": "un",
 };
 
 const EscolhaServicoScreen = ({ navigation, route }: EscolhaServicoScreenProps) => {
